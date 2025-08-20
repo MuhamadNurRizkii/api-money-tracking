@@ -108,7 +108,17 @@ export const deleteTransactionByIdQuery = async (id, userId) => {
 };
 
 export const getDataProfileQuery = async (userId) => {
-  const sql = `select u.first_name, u.last_name, u.username, sum(case when t.type = 'pemasukkan' then amount else 0 end) as total_pemasukkan, sum(case when t.type = 'pengeluaran' then amount else 0 end) as total_pengeluaran from transactions as t join users as u on (t.id_user = u.id) where t.id_user = ?`;
+  const sql = `SELECT 
+        first_name,
+        last_name,
+        username,
+        COALESCE(SUM(CASE WHEN type = 'pemasukkan' THEN amount END), 0) AS total_pemasukkan,
+        COALESCE(SUM(CASE WHEN type = 'pengeluaran' THEN amount END), 0) AS total_pengeluaran
+        FROM users u
+        LEFT JOIN transactions t
+        ON u.id = t.id_user
+        WHERE u.id = 1
+        GROUP BY u.id;`;
 
   const [result] = await pool.query(sql, [userId]);
 
