@@ -117,14 +117,15 @@ export const getDataProfileQuery = async (userId) => {
 
 export const getTransactionsByWeekQuery = async (userId) => {
   const sql = `SELECT 
-      DATE_FORMAT(created_at, '%Y-%m-%d') AS tanggal,
-      SUM(CASE WHEN type = 'pemasukkan' THEN amount ELSE 0 END) AS total_pemasukkan,
-      SUM(CASE WHEN type = 'pengeluaran' THEN amount ELSE 0 END) AS total_pengeluaran
-      FROM transactions
-      WHERE created_at >= NOW() - INTERVAL 7 DAY
-      AND id_user = ?
-      GROUP BY DATE(created_at)
-      ORDER BY DATE(created_at) ASC;`;
+    DATE_FORMAT(created_at, '%Y-%m-%d') AS tanggal,
+    SUM(CASE WHEN type = 'pemasukkan' THEN amount ELSE 0 END) AS total_pemasukkan,
+    SUM(CASE WHEN type = 'pengeluaran' THEN amount ELSE 0 END) AS total_pengeluaran
+FROM transactions
+WHERE created_at >= NOW() - INTERVAL 7 DAY
+  AND id_user = ?
+GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')
+ORDER BY DATE_FORMAT(created_at, '%Y-%m-%d') ASC;
+`;
 
   const [rows] = await pool.query(sql, [userId]);
 
@@ -140,12 +141,13 @@ export const getTransactionsByMonthQuery = async (userId) => {
     DATE_FORMAT(created_at, '%Y-%m') AS bulan,
     SUM(CASE WHEN type = 'pemasukkan' THEN amount ELSE 0 END) AS total_pemasukkan,
     SUM(CASE WHEN type = 'pengeluaran' THEN amount ELSE 0 END) AS total_pengeluaran
-    FROM transactions
-    WHERE created_at >= DATE_FORMAT(CURDATE(), '%Y-01-01') 
-    AND created_at < DATE_FORMAT(CURDATE() + INTERVAL 1 YEAR, '%Y-01-01')
-    AND id_user = ?
-    GROUP BY YEAR(created_at), MONTH(created_at)
-    ORDER BY YEAR(created_at), MONTH(created_at);
+FROM transactions
+WHERE created_at >= DATE_FORMAT(CURDATE(), '%Y-01-01') 
+  AND created_at < DATE_FORMAT(CURDATE() + INTERVAL 1 YEAR, '%Y-01-01')
+  AND id_user = ?
+GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+ORDER BY DATE_FORMAT(created_at, '%Y-%m');
+;
 `;
 
   const [rows] = await pool.query(sql, [userId]);
