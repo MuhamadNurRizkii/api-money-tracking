@@ -117,7 +117,7 @@ export const getDataProfileQuery = async (userId) => {
         FROM users u
         LEFT JOIN transactions t
         ON u.id = t.id_user
-        WHERE u.id = 1
+        WHERE u.id = ?
         GROUP BY u.id;`;
 
   const [result] = await pool.query(sql, [userId]);
