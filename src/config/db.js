@@ -10,7 +10,7 @@ export const pool = mysql.createPool({
   user: isProduction ? process.env.USER : "root",
   password: isProduction ? process.env.PASSWORD : "1234",
   database: isProduction ? process.env.DATABASE : "money_tracking",
-  multipleStatements: false,
+  multipleStatements: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
