@@ -32,9 +32,6 @@ export const getDetailTransactions = async (req, res) => {
     const userId = req.user.id;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
-    console.log(userId);
-    console.log(page);
-    console.log(limit);
 
     const data = await getDetailTransactionQuery(userId, page, limit);
 
